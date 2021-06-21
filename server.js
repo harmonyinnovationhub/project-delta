@@ -1,64 +1,73 @@
-//Create an express server and import the reuired modules
+//Create an express server and import the required modules
 const express = require("express");
-const http = require("http");
-//const bodyParser = require("body-parser");
-const connectDB = require("./db/app.js");
-//module.require("connectDB");
-
-//Access the PORT environmental variable in .env
-require("dotenv").config();
-
-//Deconstruct the PORT variable accessed from .env file
+const bodyParser = require("body-parser");
+const bcrypt = require("bcrypt");
 const { PORT } = process.env;
+const db = require("./config/database.js");
+const routers = require("./myRoutes/routes.js");
+const sequelize = require("sequelize");
+const Billing =require("./models/Billing.js");
+const Customer = require("./models/Customer.js");
+const Delivery = require("./models/Delivery.js");
+const Driver = require("./models/Driver.js");
+const routes = require("./myRoutes/routes.js");
 
-//PORT 
-const port = process.env.PORT || PORT
+//define the table association
+Customer.hasMany(Billing, {
+    foreignKey: {
+        allowNull: false
+    }
+});
 
-//Connect to database
-//connectDB();
+Customer.hasMany(Delivery, {
+    foreignKey: {
+
+        allowNull: false
+    }
+});
+
+Customer.hasMany(Driver, {
+    foreignKey: {
+        allowNull: false
+    }
+});
 
 //Initialize express
 const app = express();
+app.use(bodyParser.urlencoded({ extended: true }));
+require("dotenv").config();
 
-//Initialize express middleware
-//app.use(bodyParser.urlencoded({ extended: false }));
+try {
+   db.authenticate();
+    console.log('Connection has been established successfully.');
+
+} catch (error) {
+  console.error('Unable to connect to the database:', error);
+}
+
+try {
+    db.sync({force:true})
+    .then((result) => {
+        console.log(result);
+    });
+} catch (err) {
+    console.log(err);
+    };
+
+
+
+
+//Deconstruct the PORT variable accessed from .env file
+//PORT
+const port = process.env.PORT || PORT;
+
+//Initialize routes middleware
+app.use(routes);
 
 //serve static files like css,javascript and images
 app.use(express.static("assets"));
 
-
 //Set up express routes
-app.get("/", (req, res) => {
-    res.sendFile("./views/index.html", { root: __dirname });
-});
-
-app.get("/about.html", (req, res) => {
-    res.sendFile("./views/about.html", { root: __dirname });
-});
-
-app.get("/contact.html", (req, res) => {
-    res.sendFile("./views/contact.html", { root: __dirname });
-});
-
-app.get("/Register_User.html", (req, res) => {
-    res.sendFile("./views/Register_User.html", { root: __dirname });
-});
-
-app.get("/select_location.html", (req, res) => {
-    res.sendFile("./views/select_location.html", { root: __dirname });
-});
-
-app.get("/shipment_type.html", (req, res) => {
-    res.sendFile("./views/shipment_type.html", { root: __dirname });
-});
-
-app.get("/Signin_user.html", (req, res) => {
-    res.sendFile("./views/Signin_user.html", { root: __dirname });
-});
-
-
-
 //Listen for connection
-app.listen(port, () => console.log(`app running on ${port}`));
 
-
+app.listen(port, () => console.log(`app running on ${port}`))
