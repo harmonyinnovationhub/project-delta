@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Google Routing</title>
+  </head>
+  <style>
+    #map {
+      height: 100%;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+
+  <body>
+    <h1>Google Map</h1>
+    <div id="map"></div>
+    <script>
+      function initMap() {
+        // Map options
+        var options = {
+          zoom: 8,
+          center: { lat: 9.072264, lng: 7.491302 },
+        };
+        // New map
+        var map = new google.maps.Map(document.getElementById("map"), options);
+
+        // //  add marker
+
+        addMarker({
+          coords: { lat: 9.072264, lng: 7.491302 },
+          iconImage:
+            "http://maps.google.com/mapfiles/kml/pushpin/pink-pushpin.png",
+        });
+        addMarker({
+          coords: { lat: 8.9434, lng: 7.0816 },
+        });
+        addMarker({
+          coords: { lat: 8.876351, lng: 7.243711 },
+        });
+        addMarker({
+          coords: { lat: 9.159634, lng: 7.338608 },
+        });
+
+        // function to add multiple markers
+        function addMarker(props) {
+          var marker = new google.maps.Marker({
+            position: props.coords,
+            map: map,
+            // icon:props.iconImage
+          });
+          // Check for custom icon
+          if (props.iconImage) {
+            //Set icon image
+            marker.setIcon(props.iconImage);
+          }
+        }
+      }
+    </script>
+    <script
+      async
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAjZfzy_vD0IWXLDrog2OhN0VIGsucyUuY&callback=initMap"
+    ></script>
+  </body>
+</html>
